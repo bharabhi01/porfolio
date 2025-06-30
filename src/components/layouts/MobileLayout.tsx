@@ -45,7 +45,7 @@ export const MobileLayout: React.FC<MobileLayoutProps> = ({
 
             {/* Motivational Quote */}
             <motion.div
-                className="px-4 py-2"
+                className="px-4 py-2 min-h-[90px] flex flex-col justify-center"
                 variants={fadeInUpVariants}
             >
                 <motion.div
@@ -54,9 +54,9 @@ export const MobileLayout: React.FC<MobileLayoutProps> = ({
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.5 }}
-                    className="text-white/70 text-sm leading-relaxed italic text-center"
+                    className="text-white/70 text-sm leading-relaxed italic text-center flex-1 flex items-center justify-center"
                 >
-                    "{currentQuote}"
+                    <span className="line-clamp-3">"{currentQuote}"</span>
                 </motion.div>
                 <motion.div
                     className="flex justify-center mt-3"

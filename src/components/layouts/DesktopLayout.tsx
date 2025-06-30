@@ -45,6 +45,7 @@ export const DesktopLayout: React.FC<DesktopLayoutProps> = ({
                             variants={fadeInUpVariants}
                             initial="hidden"
                             animate="visible"
+                            className="min-h-[80px] flex flex-col justify-center"
                         >
                             <motion.div
                                 key={currentQuoteIndex}
@@ -52,9 +53,9 @@ export const DesktopLayout: React.FC<DesktopLayoutProps> = ({
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -10 }}
                                 transition={{ duration: 0.5 }}
-                                className="text-white/70 text-sm leading-relaxed italic"
+                                className="text-white/70 text-sm leading-relaxed italic flex-1 flex items-center"
                             >
-                                "{currentQuote}"
+                                <span className="line-clamp-3">"{currentQuote}"</span>
                             </motion.div>
                             <motion.div
                                 className="flex justify-center mt-2"
