@@ -15,52 +15,52 @@ interface UIUXProject {
 const uiuxProjects: UIUXProject[] = [
     {
         id: '1',
-        title: 'Mobile Banking App',
-        description: 'Complete mobile banking application design with user-centered approach and modern UI patterns',
-        designUrl: 'https://www.figma.com/design/banking-app',
-        technologies: ['Figma', 'User Research', 'Prototyping', 'Design System'],
+        title: '',
+        description: '',
+        designUrl: '',
+        technologies: [],
         backgroundGradient: 'linear-gradient(135deg, rgba(99, 102, 241, 0.8) 0%, rgba(139, 92, 246, 0.8) 100%)'
     },
     {
         id: '2',
-        title: 'E-commerce Dashboard',
-        description: 'Admin dashboard design for e-commerce platform with advanced analytics and inventory management',
-        designUrl: 'https://www.figma.com/design/ecommerce-dashboard',
-        technologies: ['Figma', 'Adobe XD', 'Data Visualization', 'Responsive Design'],
+        title: '',
+        description: '',
+        designUrl: '',
+        technologies: [],
         backgroundGradient: 'linear-gradient(135deg, rgba(16, 185, 129, 0.8) 0%, rgba(5, 150, 105, 0.8) 100%)'
     },
-    {
-        id: '3',
-        title: 'SaaS Landing Page',
-        description: 'Modern landing page design for B2B SaaS product with conversion-focused layout',
-        designUrl: 'https://www.figma.com/design/saas-landing',
-        technologies: ['Figma', 'Webflow', 'A/B Testing', 'Conversion Optimization'],
-        backgroundGradient: 'linear-gradient(135deg, rgba(245, 158, 11, 0.8) 0%, rgba(217, 119, 6, 0.8) 100%)'
-    },
-    {
-        id: '4',
-        title: 'Healthcare App',
-        description: 'Patient management mobile app with focus on accessibility and ease of use',
-        designUrl: 'https://www.figma.com/design/healthcare-app',
-        technologies: ['Figma', 'Accessibility Design', 'User Testing', 'Material Design'],
-        backgroundGradient: 'linear-gradient(135deg, rgba(59, 130, 246, 0.8) 0%, rgba(29, 78, 216, 0.8) 100%)'
-    },
-    {
-        id: '5',
-        title: 'Food Delivery App',
-        description: 'End-to-end food delivery application design with intuitive ordering flow',
-        designUrl: 'https://www.figma.com/design/food-delivery',
-        technologies: ['Figma', 'Sketch', 'InVision', 'User Journey Mapping'],
-        backgroundGradient: 'linear-gradient(135deg, rgba(239, 68, 68, 0.8) 0%, rgba(220, 38, 38, 0.8) 100%)'
-    },
-    {
-        id: '6',
-        title: 'Fintech Dashboard',
-        description: 'Investment portfolio dashboard with real-time data visualization and trading interface',
-        designUrl: 'https://www.figma.com/design/fintech-dashboard',
-        technologies: ['Figma', 'Principle', 'After Effects', 'Data Design'],
-        backgroundGradient: 'linear-gradient(135deg, rgba(168, 85, 247, 0.8) 0%, rgba(124, 58, 237, 0.8) 100%)'
-    }
+    // {
+    //     id: '3',
+    //     title: 'SaaS Landing Page',
+    //     description: 'Modern landing page design for B2B SaaS product with conversion-focused layout',
+    //     designUrl: 'https://www.figma.com/design/saas-landing',
+    //     technologies: ['Figma', 'Webflow', 'A/B Testing', 'Conversion Optimization'],
+    //     backgroundGradient: 'linear-gradient(135deg, rgba(245, 158, 11, 0.8) 0%, rgba(217, 119, 6, 0.8) 100%)'
+    // },
+    // {
+    //     id: '4',
+    //     title: 'Healthcare App',
+    //     description: 'Patient management mobile app with focus on accessibility and ease of use',
+    //     designUrl: 'https://www.figma.com/design/healthcare-app',
+    //     technologies: ['Figma', 'Accessibility Design', 'User Testing', 'Material Design'],
+    //     backgroundGradient: 'linear-gradient(135deg, rgba(59, 130, 246, 0.8) 0%, rgba(29, 78, 216, 0.8) 100%)'
+    // },
+    // {
+    //     id: '5',
+    //     title: 'Food Delivery App',
+    //     description: 'End-to-end food delivery application design with intuitive ordering flow',
+    //     designUrl: 'https://www.figma.com/design/food-delivery',
+    //     technologies: ['Figma', 'Sketch', 'InVision', 'User Journey Mapping'],
+    //     backgroundGradient: 'linear-gradient(135deg, rgba(239, 68, 68, 0.8) 0%, rgba(220, 38, 38, 0.8) 100%)'
+    // },
+    // {
+    //     id: '6',
+    //     title: 'Fintech Dashboard',
+    //     description: 'Investment portfolio dashboard with real-time data visualization and trading interface',
+    //     designUrl: 'https://www.figma.com/design/fintech-dashboard',
+    //     technologies: ['Figma', 'Principle', 'After Effects', 'Data Design'],
+    //     backgroundGradient: 'linear-gradient(135deg, rgba(168, 85, 247, 0.8) 0%, rgba(124, 58, 237, 0.8) 100%)'
+    // }
 ];
 
 export const UIUXProjectsCarousel: React.FC = () => {

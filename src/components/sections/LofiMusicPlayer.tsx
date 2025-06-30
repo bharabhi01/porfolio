@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play, Pause, SkipForward, Volume2, VolumeX, Music } from 'lucide-react';
+import { Play, Pause, Volume2, VolumeX, Music } from 'lucide-react';
 import { fadeInUpVariants } from '../../utils/animations';
 import { trackMusicInteraction } from '../../lib/posthog';
 
@@ -40,14 +40,13 @@ const lofiTracks: LofiTrack[] = [
 
 export const LofiMusicPlayer: React.FC = () => {
     const [isPlaying, setIsPlaying] = useState(false);
-    const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
     const [volume, setVolume] = useState(0.5);
     const [isMuted, setIsMuted] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const playerRef = useRef<any>(null);
     const [isPlayerReady, setIsPlayerReady] = useState(false);
 
-    const currentTrack = lofiTracks[currentTrackIndex];
+    const currentTrack = lofiTracks[0]; // Always use the first track
 
     // Load YouTube IFrame API
     useEffect(() => {
@@ -70,6 +69,8 @@ export const LofiMusicPlayer: React.FC = () => {
         loadYouTubeAPI();
     }, []);
 
+    // No track switching needed - single track player
+
     const initializePlayer = () => {
         if (!window.YT || !window.YT.Player) return;
 
@@ -91,6 +92,7 @@ export const LofiMusicPlayer: React.FC = () => {
             events: {
                 onReady: () => {
                     setIsPlayerReady(true);
+                    setIsLoading(false);
                     playerRef.current.setVolume(volume * 100);
                 },
                 onStateChange: (event: any) => {
@@ -102,8 +104,14 @@ export const LofiMusicPlayer: React.FC = () => {
                         setIsLoading(false);
                     } else if (event.data === window.YT.PlayerState.BUFFERING) {
                         setIsLoading(true);
+                    } else if (event.data === window.YT.PlayerState.UNSTARTED) {
+                        setIsLoading(false);
+                    } else if (event.data === window.YT.PlayerState.CUED) {
+                        setIsLoading(false);
                     } else if (event.data === window.YT.PlayerState.ENDED) {
-                        handleNext();
+                        // Just stop when the song ends
+                        setIsPlaying(false);
+                        setIsLoading(false);
                     }
                 }
             }
@@ -123,22 +131,7 @@ export const LofiMusicPlayer: React.FC = () => {
         }
     };
 
-    const handleNext = () => {
-        const nextIndex = (currentTrackIndex + 1) % lofiTracks.length;
-        setCurrentTrackIndex(nextIndex);
-
-        trackMusicInteraction('next', lofiTracks[nextIndex].title);
-
-        if (playerRef.current && isPlayerReady) {
-            setIsLoading(true);
-            playerRef.current.loadVideoById(lofiTracks[nextIndex].videoId);
-            if (isPlaying) {
-                setTimeout(() => {
-                    playerRef.current.playVideo();
-                }, 500);
-            }
-        }
-    };
+    // No next functionality needed for single track player
 
     const handleVolumeToggle = () => {
         if (!playerRef.current || !isPlayerReady) return;
@@ -162,194 +155,8 @@ export const LofiMusicPlayer: React.FC = () => {
     };
 
     return (
-        <motion.div
-            className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-4 overflow-hidden relative"
-            variants={fadeInUpVariants}
-            whileHover={{
-                scale: 1.01,
-                y: -2,
-                transition: { duration: 0.3, ease: "easeOut" }
-            }}
-        >
-            {/* Hidden YouTube Player */}
-            <div id="youtube-player" style={{ display: 'none' }} />
-
-            {/* Animated Background */}
-            <motion.div
-                className="absolute inset-0 opacity-20"
-                animate={{
-                    background: [
-                        "radial-gradient(circle at 20% 50%, #8b5cf6 0%, transparent 50%)",
-                        "radial-gradient(circle at 80% 50%, #06b6d4 0%, transparent 50%)",
-                        "radial-gradient(circle at 40% 70%, #ec4899 0%, transparent 50%)",
-                        "radial-gradient(circle at 60% 30%, #10b981 0%, transparent 50%)",
-                    ]
-                }}
-                transition={{
-                    duration: 8,
-                    repeat: Infinity,
-                    ease: "linear"
-                }}
-            />
-
-            {/* Header */}
-            <motion.div
-                className="flex items-center gap-2 mb-3"
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-            >
-                <motion.div
-                    animate={isPlaying ? {
-                        rotate: [0, 360],
-                        scale: [1, 1.1, 1]
-                    } : {}}
-                    transition={{
-                        rotate: { duration: 3, repeat: Infinity, ease: "linear" },
-                        scale: { duration: 2, repeat: Infinity }
-                    }}
-                >
-                    <Music size={16} className="text-purple-400" />
-                </motion.div>
-                <h3 className="text-white text-sm font-medium">Lofi Vibes</h3>
-            </motion.div>
-
-            {/* Current Track */}
-            <motion.div
-                className="mb-3"
-                variants={fadeInUpVariants}
-            >
-                <AnimatePresence mode="wait">
-                    <motion.p
-                        key={currentTrack.id}
-                        className="text-white/70 text-xs line-clamp-1"
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -20 }}
-                        transition={{ duration: 0.3 }}
-                    >
-                        {currentTrack.title}
-                    </motion.p>
-                </AnimatePresence>
-            </motion.div>
-
-            {/* Controls */}
-            <motion.div
-                className="flex items-center justify-between"
-                variants={fadeInUpVariants}
-            >
-                {/* Play/Pause & Next */}
-                <div className="flex items-center gap-2">
-                    <motion.button
-                        onClick={handlePlayPause}
-                        className="w-8 h-8 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.95 }}
-                        disabled={!isPlayerReady}
-                    >
-                        <AnimatePresence mode="wait">
-                            {isLoading ? (
-                                <motion.div
-                                    key="loading"
-                                    className="w-3 h-3 border border-white/50 border-t-white rounded-full"
-                                    animate={{ rotate: 360 }}
-                                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    exit={{ opacity: 0 }}
-                                />
-                            ) : isPlaying ? (
-                                <motion.div
-                                    key="pause"
-                                    initial={{ scale: 0 }}
-                                    animate={{ scale: 1 }}
-                                    exit={{ scale: 0 }}
-                                >
-                                    <Pause size={12} className="text-white" />
-                                </motion.div>
-                            ) : (
-                                <motion.div
-                                    key="play"
-                                    initial={{ scale: 0 }}
-                                    animate={{ scale: 1 }}
-                                    exit={{ scale: 0 }}
-                                >
-                                    <Play size={12} className="text-white ml-0.5" />
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
-                    </motion.button>
-
-                    <motion.button
-                        onClick={handleNext}
-                        className="w-6 h-6 bg-white/5 hover:bg-white/10 rounded-full flex items-center justify-center transition-colors"
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.95 }}
-                        disabled={!isPlayerReady}
-                    >
-                        <SkipForward size={10} className="text-white/70" />
-                    </motion.button>
-                </div>
-
-                {/* Volume Control */}
-                <div className="flex items-center gap-2">
-                    <motion.button
-                        onClick={handleVolumeToggle}
-                        className="text-white/50 hover:text-white/80 transition-colors"
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.95 }}
-                        disabled={!isPlayerReady}
-                    >
-                        {isMuted ? (
-                            <VolumeX size={10} />
-                        ) : (
-                            <Volume2 size={10} />
-                        )}
-                    </motion.button>
-
-                    <motion.input
-                        type="range"
-                        min="0"
-                        max="1"
-                        step="0.1"
-                        value={isMuted ? 0 : volume}
-                        onChange={(e) => handleVolumeChange(parseFloat(e.target.value))}
-                        className="w-12 h-1 bg-white/20 rounded-lg appearance-none cursor-pointer slider"
-                        style={{
-                            background: `linear-gradient(to right, #8b5cf6 0%, #8b5cf6 ${(isMuted ? 0 : volume) * 100}%, rgba(255,255,255,0.2) ${(isMuted ? 0 : volume) * 100}%, rgba(255,255,255,0.2) 100%)`
-                        }}
-                        disabled={!isPlayerReady}
-                        whileHover={{ scale: 1.05 }}
-                    />
-                </div>
-            </motion.div>
-
-            {/* Playing Indicator */}
-            <AnimatePresence>
-                {isPlaying && (
-                    <motion.div
-                        className="absolute top-2 right-2"
-                        initial={{ opacity: 0, scale: 0 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0 }}
-                    >
-                        <motion.div
-                            className="w-2 h-2 bg-green-400 rounded-full"
-                            animate={{
-                                scale: [1, 1.2, 1],
-                                opacity: [1, 0.7, 1]
-                            }}
-                            transition={{
-                                duration: 1.5,
-                                repeat: Infinity,
-                                ease: "easeInOut"
-                            }}
-                        />
-                    </motion.div>
-                )}
-            </AnimatePresence>
-
-            <style jsx>{`
+        <>
+            <style>{`
                 .slider::-webkit-slider-thumb {
                     appearance: none;
                     width: 12px;
@@ -371,6 +178,188 @@ export const LofiMusicPlayer: React.FC = () => {
                     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
                 }
             `}</style>
-        </motion.div>
+            <motion.div
+                className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-4 overflow-hidden relative"
+                variants={fadeInUpVariants}
+                whileHover={{
+                    scale: 1.01,
+                    y: -2,
+                    transition: { duration: 0.3, ease: "easeOut" }
+                }}
+            >
+                {/* Hidden YouTube Player */}
+                <div id="youtube-player" style={{ display: 'none' }} />
+
+                {/* Animated Background */}
+                <motion.div
+                    className="absolute inset-0 opacity-20"
+                    animate={{
+                        background: [
+                            "radial-gradient(circle at 20% 50%, #8b5cf6 0%, transparent 50%)",
+                            "radial-gradient(circle at 80% 50%, #06b6d4 0%, transparent 50%)",
+                            "radial-gradient(circle at 40% 70%, #ec4899 0%, transparent 50%)",
+                            "radial-gradient(circle at 60% 30%, #10b981 0%, transparent 50%)",
+                        ]
+                    }}
+                    transition={{
+                        duration: 8,
+                        repeat: Infinity,
+                        ease: "linear"
+                    }}
+                />
+
+                {/* Header */}
+                <motion.div
+                    className="flex items-center gap-2 mb-3"
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                >
+                    <motion.div
+                        animate={isPlaying ? {
+                            rotate: [0, 360],
+                            scale: [1, 1.1, 1]
+                        } : {}}
+                        transition={{
+                            rotate: { duration: 3, repeat: Infinity, ease: "linear" },
+                            scale: { duration: 2, repeat: Infinity }
+                        }}
+                    >
+                        <Music size={16} className="text-purple-400" />
+                    </motion.div>
+                    <h3 className="text-white text-sm font-medium">Lofi Vibes</h3>
+                </motion.div>
+
+                {/* Current Track */}
+                <motion.div
+                    className="mb-3"
+                    variants={fadeInUpVariants}
+                >
+                    <AnimatePresence mode="wait">
+                        <motion.p
+                            key={currentTrack.id}
+                            className="text-white/70 text-xs line-clamp-1"
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -20 }}
+                            transition={{ duration: 0.3 }}
+                        >
+                            {currentTrack.title}
+                        </motion.p>
+                    </AnimatePresence>
+                </motion.div>
+
+                {/* Controls */}
+                <motion.div
+                    className="flex items-center justify-between"
+                    variants={fadeInUpVariants}
+                >
+                    {/* Play/Pause & Next */}
+                    <div className="flex items-center gap-2">
+                        <motion.button
+                            onClick={handlePlayPause}
+                            className="w-8 h-8 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.95 }}
+                            disabled={!isPlayerReady}
+                        >
+                            <AnimatePresence mode="wait">
+                                {isLoading ? (
+                                    <motion.div
+                                        key="loading"
+                                        className="w-3 h-3 border border-white/50 border-t-white rounded-full"
+                                        initial={{ opacity: 0 }}
+                                        animate={{
+                                            opacity: 1,
+                                            rotate: 360
+                                        }}
+                                        exit={{ opacity: 0 }}
+                                        transition={{
+                                            opacity: { duration: 0.2 },
+                                            rotate: { duration: 1, repeat: Infinity, ease: "linear" }
+                                        }}
+                                    />
+                                ) : isPlaying ? (
+                                    <motion.div
+                                        key="pause"
+                                        initial={{ scale: 0 }}
+                                        animate={{ scale: 1 }}
+                                        exit={{ scale: 0 }}
+                                    >
+                                        <Pause size={12} className="text-white" />
+                                    </motion.div>
+                                ) : (
+                                    <motion.div
+                                        key="play"
+                                        initial={{ scale: 0 }}
+                                        animate={{ scale: 1 }}
+                                        exit={{ scale: 0 }}
+                                    >
+                                        <Play size={12} className="text-white ml-0.5" />
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </motion.button>
+                    </div>
+
+                    {/* Volume Control */}
+                    <div className="flex items-center gap-2">
+                        <motion.button
+                            onClick={handleVolumeToggle}
+                            className="text-white/50 hover:text-white/80 transition-colors"
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.95 }}
+                            disabled={!isPlayerReady}
+                        >
+                            {isMuted ? (
+                                <VolumeX size={10} />
+                            ) : (
+                                <Volume2 size={10} />
+                            )}
+                        </motion.button>
+
+                        <motion.input
+                            type="range"
+                            min="0"
+                            max="1"
+                            step="0.1"
+                            value={isMuted ? 0 : volume}
+                            onChange={(e) => handleVolumeChange(parseFloat(e.target.value))}
+                            className="w-12 h-1 bg-white/20 rounded-lg appearance-none cursor-pointer slider"
+                            style={{
+                                background: `linear-gradient(to right, #8b5cf6 0%, #8b5cf6 ${(isMuted ? 0 : volume) * 100}%, rgba(255,255,255,0.2) ${(isMuted ? 0 : volume) * 100}%, rgba(255,255,255,0.2) 100%)`
+                            }}
+                            disabled={!isPlayerReady}
+                            whileHover={{ scale: 1.05 }}
+                        />
+                    </div>
+                </motion.div>
+
+                {/* Playing Indicator */}
+                <AnimatePresence>
+                    {isPlaying && (
+                        <motion.div
+                            className="absolute top-2 right-2"
+                            initial={{ opacity: 0, scale: 0 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0 }}
+                        >
+                            <motion.div
+                                className="w-2 h-2 bg-green-400 rounded-full"
+                                animate={{
+                                    scale: [1, 1.2, 1],
+                                    opacity: [1, 0.7, 1]
+                                }}
+                                transition={{
+                                    duration: 1.5,
+                                    repeat: Infinity,
+                                    ease: "easeInOut"
+                                }}
+                            />
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </motion.div>
+        </>
     );
 }; 
