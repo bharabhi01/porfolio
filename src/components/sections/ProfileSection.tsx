@@ -168,7 +168,7 @@ export const ProfileSection: React.FC<ProfileSectionProps> = ({
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.6, duration: 0.5 }}
                 >
-                    Passionate about creating beautiful, functional, and user-centered digital experiences.
+                    Transforming complex ideas into elegant digital solutions through code and design.
                 </motion.p>
             </motion.div>
 
