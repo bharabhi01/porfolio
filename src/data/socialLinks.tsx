@@ -8,10 +8,9 @@ import {
 } from 'lucide-react';
 
 export const socialLinks = [
-    { icon: <Github size={16} />, href: "https://github.com", label: "GitHub" },
-    { icon: <Linkedin size={16} />, href: "https://linkedin.com", label: "LinkedIn" },
-    { icon: <Twitter size={16} />, href: "https://twitter.com", label: "Twitter" },
-    { icon: <Mail size={16} />, href: "mailto:hello@example.com", label: "Email" },
-    { icon: <Globe size={16} />, href: "https://example.com", label: "Website" },
-    { icon: <BookOpen size={16} />, href: "https://medium.com", label: "Medium" }
+    { icon: <Github size={16} />, href: "https://github.com/bharabhi01", label: "GitHub" },
+    { icon: <Linkedin size={16} />, href: "https://www.linkedin.com/in/bhardwajabhi/", label: "LinkedIn" },
+    { icon: <Twitter size={16} />, href: "https://x.com/abhi_0x", label: "Twitter" },
+    { icon: <Mail size={16} />, href: "mailto:bhardwajabhi2701@gmail.com", label: "Email" },
+    { icon: <BookOpen size={16} />, href: "https://medium.com/@bhardwajabhi2701", label: "Medium" }
 ]; 

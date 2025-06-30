@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Sparkles, RefreshCw, ExternalLink } from 'lucide-react';
 import { useSpacePicture } from '../../hooks';
 import { fadeInUpVariants, staggerContainer } from '../../utils/animations';
+import { trackSpacePictureView } from '../../lib/posthog';
 
 export const SpacePictureSection: React.FC = () => {
     const { pictureData, loading, error, refetch } = useSpacePicture();
@@ -106,7 +107,10 @@ export const SpacePictureSection: React.FC = () => {
                 y: -2,
                 transition: { duration: 0.3, ease: "easeOut" }
             }}
-            onClick={() => window.open(pictureData.hdurl || pictureData.url, '_blank')}
+            onClick={() => {
+                trackSpacePictureView(pictureData.title);
+                window.open(pictureData.hdurl || pictureData.url, '_blank');
+            }}
         >
             {/* Background Image */}
             <motion.img

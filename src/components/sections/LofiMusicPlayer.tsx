@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Play, Pause, SkipForward, Volume2, VolumeX, Music } from 'lucide-react';
 import { fadeInUpVariants } from '../../utils/animations';
+import { trackMusicInteraction } from '../../lib/posthog';
 
 interface LofiTrack {
     id: string;
@@ -114,15 +115,19 @@ export const LofiMusicPlayer: React.FC = () => {
 
         if (isPlaying) {
             playerRef.current.pauseVideo();
+            trackMusicInteraction('pause', currentTrack.title);
         } else {
             setIsLoading(true);
             playerRef.current.playVideo();
+            trackMusicInteraction('play', currentTrack.title);
         }
     };
 
     const handleNext = () => {
         const nextIndex = (currentTrackIndex + 1) % lofiTracks.length;
         setCurrentTrackIndex(nextIndex);
+
+        trackMusicInteraction('next', lofiTracks[nextIndex].title);
 
         if (playerRef.current && isPlayerReady) {
             setIsLoading(true);
@@ -153,6 +158,7 @@ export const LofiMusicPlayer: React.FC = () => {
         if (playerRef.current && isPlayerReady && !isMuted) {
             playerRef.current.setVolume(newVolume * 100);
         }
+        trackMusicInteraction('volume_change', currentTrack.title);
     };
 
     return (

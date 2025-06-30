@@ -4,6 +4,7 @@ import { BookOpen, ExternalLink, RefreshCw } from 'lucide-react';
 import { useMediumArticles } from '../../hooks';
 import { InfoCard } from '../ui';
 import { staggerContainer, fadeInUpVariants } from '../../utils/animations';
+import { trackMediumArticleClick } from '../../lib/posthog';
 
 interface MediumArticlesSectionProps {
     isMobile?: boolean;
@@ -123,6 +124,7 @@ export const MediumArticlesSection: React.FC<MediumArticlesSectionProps> = ({
                                 x: 4,
                                 transition: { duration: 0.2 }
                             }}
+                            onClick={() => trackMediumArticleClick(article.title, article.link)}
                         >
                             <motion.div
                                 className="flex items-start justify-between gap-2 mb-1"

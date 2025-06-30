@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { socialLinks } from '../../data/socialLinks';
 import { staggerContainer, fadeInUpVariants } from '../../utils/animations';
+import { trackSocialClick } from '../../lib/posthog';
 
 interface SocialLinksSectionProps {
     isMobile?: boolean;
@@ -61,6 +62,7 @@ export const SocialLinksSection: React.FC<SocialLinksSectionProps> = ({ isMobile
                         }}
                         whileTap={{ scale: 0.95 }}
                         custom={index}
+                        onClick={() => trackSocialClick(link.label, link.href)}
                     >
                         {/* Background glow effect */}
                         <motion.div
