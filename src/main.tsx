@@ -2,12 +2,35 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
-import { initPostHog } from './lib/posthog.ts';
+import { PostHogProvider } from 'posthog-js/react';
 
-initPostHog();
+const options = {
+  api_host: import.meta.env.VITE_PUBLIC_POSTHOG_HOST || 'https://app.posthog.com',
+  // Enable/disable based on environment
+  // disabled: import.meta.env.MODE === 'development',
+  // Privacy settings
+  respect_dnt: true,
+  capture_pageview: true,
+  capture_pageleave: true,
+  // Session recording (optional - can be disabled for privacy)
+  disable_session_recording: false,
+  // Autocapture settings
+  autocapture: true,
+  // Cross-domain tracking
+  cross_subdomain_cookie: false,
+  // Debug mode (only in development)
+  debug: import.meta.env.MODE === 'development',
+  // Persistence
+  persistence: 'localStorage' as const,
+};
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <PostHogProvider
+      apiKey={import.meta.env.VITE_PUBLIC_POSTHOG_KEY}
+      options={options}
+    >
+      <App />
+    </PostHogProvider>
   </StrictMode>
 );
