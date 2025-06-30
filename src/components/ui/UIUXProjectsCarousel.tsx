@@ -66,15 +66,28 @@ const uiuxProjects: UIUXProject[] = [
 export const UIUXProjectsCarousel: React.FC = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [direction, setDirection] = useState(0);
+    const [isPaused, setIsPaused] = useState(false);
+    const intervalRef = useRef<number | null>(null);
 
-    // Auto-play functionality
+    // Auto-play functionality with pause support
     useEffect(() => {
-        const interval = setInterval(() => {
-            handleNext();
-        }, 5000);
+        if (!isPaused) {
+            intervalRef.current = setInterval(() => {
+                handleNext();
+            }, 5000);
+        } else {
+            if (intervalRef.current) {
+                clearInterval(intervalRef.current);
+                intervalRef.current = null;
+            }
+        }
 
-        return () => clearInterval(interval);
-    }, [currentIndex]);
+        return () => {
+            if (intervalRef.current) {
+                clearInterval(intervalRef.current);
+            }
+        };
+    }, [currentIndex, isPaused]);
 
     const slideVariants = {
         hiddenRight: {
@@ -171,6 +184,10 @@ export const UIUXProjectsCarousel: React.FC = () => {
         }
     };
 
+    // Pause/resume handlers
+    const handleMouseEnter = () => setIsPaused(true);
+    const handleMouseLeave = () => setIsPaused(false);
+
     return (
         <div className="relative w-full h-[600px] md:h-[700px] flex flex-col items-center justify-center overflow-hidden px-4 md:px-0">
             {/* Background Text */}
@@ -184,23 +201,19 @@ export const UIUXProjectsCarousel: React.FC = () => {
             <div className="relative w-full max-w-6xl h-[480px] md:h-[580px] flex items-center justify-center z-10">
                 {/* Navigation Arrows - Hidden on mobile, visible on desktop */}
                 <motion.button
-                    className="hidden md:block absolute -left-16 md:-left-20 lg:-left-24 top-1/2 transform -translate-y-1/2 text-white/80 hover:text-white transition-colors duration-200 cursor-pointer z-30 bg-black/50 backdrop-blur-md rounded-full p-3 md:p-4 border border-white/20 shadow-lg"
+                    className="hidden md:block absolute -left-16 md:-left-20 lg:-left-24 top-1/2 transform -translate-y-1/2 text-white/60 hover:text-white transition-colors duration-200 cursor-pointer z-30 bg-white/10 hover:bg-white/20 rounded-full p-2 border border-white/10"
                     onClick={handlePrevious}
-                    variants={leftSliderVariants}
-                    whileHover="hover"
                     whileTap={{ scale: 0.9 }}
                 >
-                    <ChevronLeft size={20} strokeWidth={2} className="md:w-6 md:h-6" />
+                    <ChevronLeft size={16} strokeWidth={2} />
                 </motion.button>
 
                 <motion.button
-                    className="hidden md:block absolute -right-16 md:-right-20 lg:-right-24 top-1/2 transform -translate-y-1/2 text-white/80 hover:text-white transition-colors duration-200 cursor-pointer z-30 bg-black/50 backdrop-blur-md rounded-full p-3 md:p-4 border border-white/20 shadow-lg"
+                    className="hidden md:block absolute -right-16 md:-right-20 lg:-right-24 top-1/2 transform -translate-y-1/2 text-white/60 hover:text-white transition-colors duration-200 cursor-pointer z-30 bg-white/10 hover:bg-white/20 rounded-full p-2 border border-white/10"
                     onClick={handleNext}
-                    variants={slidersVariants}
-                    whileHover="hover"
                     whileTap={{ scale: 0.9 }}
                 >
-                    <ChevronRight size={20} strokeWidth={2} className="md:w-6 md:h-6" />
+                    <ChevronRight size={16} strokeWidth={2} />
                 </motion.button>
 
                 <AnimatePresence>
@@ -226,6 +239,8 @@ export const UIUXProjectsCarousel: React.FC = () => {
                                 boxShadow: "0 25px 50px rgba(0,0,0,0.3)"
                             }}
                             onClick={() => handleCardClick(uiuxProjects[currentIndex])}
+                            onMouseEnter={handleMouseEnter}
+                            onMouseLeave={handleMouseLeave}
                         >
                             {/* Animated background pattern */}
                             <motion.div

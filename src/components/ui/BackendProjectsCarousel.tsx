@@ -201,23 +201,23 @@ export const BackendProjectsCarousel: React.FC = () => {
             <div className="relative w-full max-w-6xl h-[480px] md:h-[580px] flex items-center justify-center z-10">
                 {/* Navigation Arrows - Hidden on mobile, visible on desktop */}
                 <motion.button
-                    className="hidden md:block absolute -left-16 md:-left-20 lg:-left-24 top-1/2 transform -translate-y-1/2 text-white/80 hover:text-white transition-colors duration-200 cursor-pointer z-30 bg-black/50 backdrop-blur-md rounded-full p-3 md:p-4 border border-white/20 shadow-lg"
+                    className="hidden md:block absolute -left-16 md:-left-20 lg:-left-24 top-1/2 transform -translate-y-1/2 text-white/60 hover:text-white transition-colors duration-200 cursor-pointer z-30 bg-white/10 hover:bg-white/20 rounded-full p-2 border border-white/10"
                     onClick={handlePrevious}
-                    variants={leftSliderVariants}
-                    whileHover="hover"
                     whileTap={{ scale: 0.9 }}
+                    onMouseEnter={handleMouseEnter}
+                    onMouseLeave={handleMouseLeave}
                 >
-                    <ChevronLeft size={20} strokeWidth={2} className="md:w-6 md:h-6" />
+                    <ChevronLeft size={16} strokeWidth={2} />
                 </motion.button>
 
                 <motion.button
-                    className="hidden md:block absolute -right-16 md:-right-20 lg:-right-24 top-1/2 transform -translate-y-1/2 text-white/80 hover:text-white transition-colors duration-200 cursor-pointer z-30 bg-black/50 backdrop-blur-md rounded-full p-3 md:p-4 border border-white/20 shadow-lg"
+                    className="hidden md:block absolute -right-16 md:-right-20 lg:-right-24 top-1/2 transform -translate-y-1/2 text-white/60 hover:text-white transition-colors duration-200 cursor-pointer z-30 bg-white/10 hover:bg-white/20 rounded-full p-2 border border-white/10"
                     onClick={handleNext}
-                    variants={slidersVariants}
-                    whileHover="hover"
                     whileTap={{ scale: 0.9 }}
+                    onMouseEnter={handleMouseEnter}
+                    onMouseLeave={handleMouseLeave}
                 >
-                    <ChevronRight size={20} strokeWidth={2} className="md:w-6 md:h-6" />
+                    <ChevronRight size={16} strokeWidth={2} />
                 </motion.button>
 
                 <AnimatePresence>
