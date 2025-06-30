@@ -5,12 +5,12 @@ export const initPostHog = () => {
     // Only initialize in production or when explicitly enabled
     if (typeof window !== 'undefined') {
         // You'll need to replace this with your actual PostHog project API key
-        const POSTHOG_KEY = import.meta.env.NEXT_PUBLIC_POSTHOG_KEY;
-        const POSTHOG_HOST = import.meta.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://app.posthog.com';
+        const POSTHOG_KEY = import.meta.env.VITE_PUBLIC_POSTHOG_KEY;
+        const POSTHOG_HOST = import.meta.env.VITE_PUBLIC_POSTHOG_HOST || 'https://app.posthog.com';
 
         // Don't initialize PostHog if we don't have a valid API key
         if (!POSTHOG_KEY) {
-            console.warn('PostHog not initialized: Missing VITE_POSTHOG_KEY environment variable');
+            console.warn('PostHog not initialized: Missing VITE_PUBLIC_POSTHOG_KEY environment variable');
             return;
         }
 
