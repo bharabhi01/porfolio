@@ -80,7 +80,7 @@ export const ProfileSection: React.FC<ProfileSectionProps> = ({
                     }}
                 >
                     <motion.img
-                        src="/src/assets/profile.jpg"
+                        src="/assets/profile.jpg"
                         alt="Profile"
                         className="w-full h-full object-cover"
                         whileHover={{ scale: 1.1 }}

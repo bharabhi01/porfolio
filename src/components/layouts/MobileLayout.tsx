@@ -91,7 +91,7 @@ export const MobileLayout: React.FC<MobileLayoutProps> = ({
                 <motion.div
                     className="w-full h-full relative"
                     style={{
-                        backgroundImage: "url('/src/assets/images.jpeg')",
+                        backgroundImage: "url('/assets/images.jpeg')",
                         backgroundSize: 'cover',
                         backgroundPosition: 'center'
                     }}

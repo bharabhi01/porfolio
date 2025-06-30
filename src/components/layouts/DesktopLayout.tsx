@@ -93,7 +93,7 @@ export const DesktopLayout: React.FC<DesktopLayoutProps> = ({
                             <motion.div
                                 className="w-full h-full relative"
                                 style={{
-                                    backgroundImage: "url('/src/assets/images.jpeg')",
+                                    backgroundImage: "url('/assets/images.jpeg')",
                                     backgroundSize: 'cover',
                                     backgroundPosition: 'center'
                                 }}
