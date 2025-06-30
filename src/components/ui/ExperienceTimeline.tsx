@@ -147,7 +147,7 @@ export const ExperienceTimeline: React.FC = () => {
                 {experiences.map((experience, index) => (
                     <motion.div
                         key={experience.id}
-                        className="relative flex items-start mb-16 last:mb-0"
+                        className="relative flex items-start mb-8 last:mb-0"
                         variants={item}
                         transition={{
                             duration: 0.6,
@@ -157,25 +157,32 @@ export const ExperienceTimeline: React.FC = () => {
                     >
                         {/* Timeline Dot */}
                         <motion.div
-                            className="absolute left-9 w-6 h-6 bg-white rounded-full border-4 border-blue-500/50 shadow-lg z-10"
-                            initial={{ scale: 0 }}
-                            animate={{ scale: 1 }}
+                            className="absolute left-8 w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg rotate-45 shadow-lg z-10 flex items-center justify-center"
+                            initial={{ scale: 0, rotate: 0 }}
+                            animate={{ scale: 1, rotate: 45 }}
                             transition={{
                                 delay: 0.8 + index * 0.3,
-                                duration: 0.4,
+                                duration: 0.5,
                                 type: "spring",
-                                stiffness: 200
+                                stiffness: 150
                             }}
                             whileHover={{
-                                scale: 1.2,
-                                borderColor: "rgba(59, 130, 246, 0.8)",
-                                boxShadow: "0 0 20px rgba(59, 130, 246, 0.5)"
+                                scale: 1.15,
+                                rotate: 90,
+                                boxShadow: "0 0 25px rgba(59, 130, 246, 0.6)"
                             }}
-                        />
+                        >
+                            <motion.div
+                                className="w-3 h-3 bg-white rounded-sm"
+                                initial={{ rotate: -45 }}
+                                animate={{ rotate: -45 }}
+                                whileHover={{ rotate: -90 }}
+                            />
+                        </motion.div>
 
                         {/* Experience Card */}
                         <motion.div
-                            className="ml-20 w-full bg-white/[0.02] backdrop-blur-sm border border-white/[0.08] rounded-2xl p-8 group cursor-pointer"
+                            className="ml-20 w-full bg-white/[0.02] backdrop-blur-sm border border-white/[0.08] rounded-2xl p-6 group cursor-pointer"
                             whileHover={{
                                 scale: 1.02,
                                 y: -4,
@@ -186,7 +193,7 @@ export const ExperienceTimeline: React.FC = () => {
                             onClick={() => handleCompanyClick(experience)}
                         >
                             {/* Header */}
-                            <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+                            <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
                                 <div className="space-y-2">
                                     <motion.h3
                                         className="text-white text-2xl font-bold group-hover:text-blue-300 transition-colors duration-300"
@@ -198,10 +205,20 @@ export const ExperienceTimeline: React.FC = () => {
                                         className="flex items-center gap-2 text-white/90 text-lg font-semibold"
                                         whileHover={{ x: 4 }}
                                     >
-                                        <Briefcase size={20} className="text-blue-400" />
+                                        <motion.div
+                                            className="w-5 h-5 bg-gradient-to-r from-blue-400 to-purple-400 rounded-md flex items-center justify-center"
+                                            whileHover={{ rotate: 5, scale: 1.1 }}
+                                        >
+                                            <Briefcase size={12} className="text-white" />
+                                        </motion.div>
                                         <span>{experience.company}</span>
                                         {experience.companyUrl && (
-                                            <ExternalLink size={16} className="text-white/60 group-hover:text-blue-400 transition-colors" />
+                                            <motion.div
+                                                className="w-4 h-4 bg-gradient-to-r from-blue-400 to-purple-400 rounded-sm flex items-center justify-center ml-1 group-hover:bg-gradient-to-r group-hover:from-blue-500 group-hover:to-purple-500 transition-all duration-300"
+                                                whileHover={{ rotate: 12, scale: 1.2 }}
+                                            >
+                                                <ExternalLink size={10} className="text-white" />
+                                            </motion.div>
                                         )}
                                     </motion.div>
                                 </div>
@@ -211,14 +228,24 @@ export const ExperienceTimeline: React.FC = () => {
                                         className="flex items-center gap-2 text-white/70 text-sm"
                                         whileHover={{ x: -4 }}
                                     >
-                                        <Calendar size={16} className="text-purple-400" />
+                                        <motion.div
+                                            className="w-4 h-4 bg-gradient-to-r from-purple-400 to-pink-400 rounded-sm flex items-center justify-center"
+                                            whileHover={{ rotate: -5, scale: 1.1 }}
+                                        >
+                                            <Calendar size={10} className="text-white" />
+                                        </motion.div>
                                         <span className="font-medium">{experience.duration}</span>
                                     </motion.div>
                                     <motion.div
                                         className="flex items-center gap-2 text-white/70 text-sm"
                                         whileHover={{ x: -4 }}
                                     >
-                                        <MapPin size={16} className="text-pink-400" />
+                                        <motion.div
+                                            className="w-4 h-4 bg-gradient-to-r from-pink-400 to-red-400 rounded-sm flex items-center justify-center"
+                                            whileHover={{ rotate: -5, scale: 1.1 }}
+                                        >
+                                            <MapPin size={10} className="text-white" />
+                                        </motion.div>
                                         <span>{experience.location}</span>
                                     </motion.div>
                                 </div>
@@ -226,7 +253,7 @@ export const ExperienceTimeline: React.FC = () => {
 
                             {/* Description */}
                             <motion.div
-                                className="space-y-3 mb-6"
+                                className="space-y-2 mb-4"
                                 initial={{ opacity: 0.8 }}
                                 whileHover={{ opacity: 1 }}
                             >
