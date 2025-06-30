@@ -4,7 +4,7 @@ import { MobileLayout, DesktopLayout } from './components/layouts';
 import { DetailPage } from './pages/DetailPage';
 import { useTime } from './hooks';
 import { pageTransitionVariants } from './utils/animations';
-import { initPostHog, trackPageView, trackNavigation } from './lib/posthog';
+import { trackPageView, trackNavigation } from './lib/posthog';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home');
@@ -12,8 +12,6 @@ function App() {
 
   // Initialize PostHog on app mount
   useEffect(() => {
-    initPostHog();
-
     // Track initial page load
     trackPageView('home', {
       initial_load: true,
