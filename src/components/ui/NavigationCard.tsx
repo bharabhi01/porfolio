@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { NavigationCardProps } from '../../types';
 import { cardHoverVariants, fadeInUpVariants } from '../../utils/animations';
+import { trackProjectView } from '../../lib/posthog';
 
 export const NavigationCard = React.memo(({
     title,
@@ -14,7 +15,10 @@ export const NavigationCard = React.memo(({
     isExperienceCard = false
 }: NavigationCardProps) => (
     <motion.div
-        onClick={onClick}
+        onClick={() => {
+            trackProjectView(title.toLowerCase().replace(/\s+/g, '_'));
+            onClick();
+        }}
         className={`group relative bg-white/[0.02] backdrop-blur-sm border border-white/[0.08] rounded-3xl p-6 md:p-8 cursor-pointer overflow-hidden transition-all duration-300 hover:bg-white/[0.04] hover:border-white/[0.12] ${className}`}
         variants={fadeInUpVariants}
         initial="hidden"
