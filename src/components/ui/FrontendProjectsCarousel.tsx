@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, PanInfo } from 'framer-motion';
-import { Github, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Github, ChevronLeft, ChevronRight, ExternalLink } from 'lucide-react';
 import { trackEvent } from '../../lib/posthog';
 
 interface FrontendProject {
@@ -8,6 +8,7 @@ interface FrontendProject {
     title: string;
     description: string;
     githubUrl: string;
+    websiteUrl?: string;
     technologies: string[];
     backgroundGradient: string;
 }
@@ -15,51 +16,64 @@ interface FrontendProject {
 const frontendProjects: FrontendProject[] = [
     {
         id: '1',
-        title: 'React Dashboard',
-        description: 'Modern admin dashboard built with React, TypeScript, and Tailwind CSS featuring real-time analytics',
-        githubUrl: 'https://github.com/bharabhi01/react-dashboard',
-        technologies: ['React', 'TypeScript', 'Tailwind CSS', 'Chart.js'],
+        title: 'Personal Finance',
+        description: 'A comprehensive personal finance application designed to help you track your income, expenses, investments, and savings.',
+        githubUrl: 'https://github.com/bharabhi01/personal-finance',
+        websiteUrl: 'https://budget-101.vercel.app',
+        technologies: ['React', 'TypeScript', 'Tailwind CSS', 'Chart.js', 'Supabase', 'Lucide React', 'Zod'],
         backgroundGradient: 'linear-gradient(135deg, rgba(59, 130, 246, 0.8) 0%, rgba(147, 51, 234, 0.8) 100%)'
     },
     {
         id: '2',
-        title: 'Next.js E-commerce',
-        description: 'Full-stack e-commerce platform with Next.js, Stripe payments, and responsive design',
-        githubUrl: 'https://github.com/bharabhi01/nextjs-ecommerce',
-        technologies: ['Next.js', 'React', 'Stripe', 'Prisma'],
-        backgroundGradient: 'linear-gradient(135deg, rgba(16, 185, 129, 0.8) 0%, rgba(6, 182, 212, 0.8) 100%)'
+        title: 'AI Goal Planner',
+        description: 'Create roadmaps for your goals using AI',
+        githubUrl: 'https://github.com/bharabhi01/tickbox',
+        technologies: ['React', 'Tailwind', 'Node.js', 'Express', 'MongoDB', 'Gemini'],
+        backgroundGradient: 'linear-gradient(135deg, rgba(162, 159, 169, 0.8) 0%, rgba(168, 85, 247, 0.8) 100%)'
     },
     {
         id: '3',
-        title: 'Vue.js Portfolio',
-        description: 'Interactive portfolio website built with Vue.js, featuring smooth animations and modern UI',
-        githubUrl: 'https://github.com/bharabhi01/vue-portfolio',
-        technologies: ['Vue.js', 'Nuxt.js', 'SCSS', 'Framer Motion'],
+        title: 'Nimble Task Mover',
+        description: 'A task management application where you can add, edit, and delete tasks. You can also move tasks to different lists.',
+        githubUrl: 'https://github.com/bharabhi01/nimble-task-mover',
+        websiteUrl: 'https://nimble-task-mover.vercel.app',
+        technologies: ['React', 'Tailwind', 'Python', 'React-beautiful-dnd'],
         backgroundGradient: 'linear-gradient(135deg, rgba(34, 197, 94, 0.8) 0%, rgba(16, 185, 129, 0.8) 100%)'
     },
     {
         id: '4',
-        title: 'React Native App',
-        description: 'Cross-platform mobile application with React Native, Firebase, and real-time features',
-        githubUrl: 'https://github.com/bharabhi01/react-native-app',
-        technologies: ['React Native', 'Firebase', 'Redux', 'Expo'],
+        title: 'Test Case Tracker',
+        description: 'A web application designed to help you manage, track, and organize your test cases efficiently. With an intuitive interface and powerful features, it simplifies the testing process, making it easier for teams to ensure the quality of their software.',
+        githubUrl: 'https://github.com/bharabhi01/testcasetracker',
+        websiteUrl: 'https://testcasetracker.vercel.app/',
+        technologies: ['React', 'Semantic UI', 'Supabase', 'Vercel'],
         backgroundGradient: 'linear-gradient(135deg, rgba(139, 92, 246, 0.8) 0%, rgba(168, 85, 247, 0.8) 100%)'
     },
     {
         id: '5',
-        title: 'Angular SPA',
-        description: 'Single Page Application with Angular, RxJS, and Material Design components',
-        githubUrl: 'https://github.com/bharabhi01/angular-spa',
-        technologies: ['Angular', 'RxJS', 'Material UI', 'TypeScript'],
+        title: 'Form to Excel',
+        description: 'A web application that allows users to submit form data and automatically export it to an Excel file. This tool is ideal for collecting data from multiple users and organizing it in a structured format.',
+        githubUrl: 'https://github.com/bharabhi01/formtoexcel',
+        websiteUrl: 'https://form-to-excel-two.vercel.app/',
+        technologies: ['React', 'Tailwind', 'ExcelJS', 'Supabase', 'Vercel'],
         backgroundGradient: 'linear-gradient(135deg, rgba(239, 68, 68, 0.8) 0%, rgba(244, 63, 94, 0.8) 100%)'
     },
     {
         id: '6',
-        title: 'Svelte App',
-        description: 'Lightweight web application built with Svelte, focusing on performance and minimal bundle size',
-        githubUrl: 'https://github.com/bharabhi01/svelte-app',
-        technologies: ['Svelte', 'SvelteKit', 'Vite', 'PostCSS'],
+        title: 'SharePic',
+        description: "A social media website with all advanced Social Media features, such as Google Authentication, create, edit, delete and save posts, like and comment on other people's posts, search and filter images and much more.",
+        githubUrl: 'https://github.com/bharabhi01/SharePic',
+        websiteUrl: 'https://sharepicab.netlify.app/login',
+        technologies: ['React', 'Tailwind', 'Sanity.io', 'Netlify'],
         backgroundGradient: 'linear-gradient(135deg, rgba(245, 158, 11, 0.8) 0%, rgba(251, 146, 60, 0.8) 100%)'
+    },
+    {
+        id: '7',
+        title: 'Matrix Routing',
+        description: "An app which calculates the shortest distance from each drop-off spot to show us the best route for us as the delivery driver, to drop off all three deliveries based on time",
+        githubUrl: 'https://github.com/bharabhi01/Matrix-Routing',
+        technologies: ['React', 'Tailwind', 'TomTom API'],
+        backgroundGradient: 'linear-gradient(135deg, rgba(80, 255, 68, 0.8) 0%, rgba(16, 185, 129, 0.8) 100%)'
     }
 ];
 
@@ -165,11 +179,40 @@ export const FrontendProjectsCarousel: React.FC = () => {
     };
 
     const handleCardClick = (project: FrontendProject) => {
+        // If website exists, open website; otherwise open GitHub
+        if (project.websiteUrl) {
+            trackEvent('frontend_project_website_click', {
+                project_title: project.title,
+                website_url: project.websiteUrl
+            });
+            window.open(project.websiteUrl, '_blank');
+        } else {
+            trackEvent('frontend_project_github_click', {
+                project_title: project.title,
+                github_url: project.githubUrl
+            });
+            window.open(project.githubUrl, '_blank');
+        }
+    };
+
+    const handleGithubClick = (e: React.MouseEvent, project: FrontendProject) => {
+        e.stopPropagation();
         trackEvent('frontend_project_github_click', {
             project_title: project.title,
             github_url: project.githubUrl
         });
         window.open(project.githubUrl, '_blank');
+    };
+
+    const handleWebsiteClick = (e: React.MouseEvent, project: FrontendProject) => {
+        e.stopPropagation();
+        if (project.websiteUrl) {
+            trackEvent('frontend_project_website_click', {
+                project_title: project.title,
+                website_url: project.websiteUrl
+            });
+            window.open(project.websiteUrl, '_blank');
+        }
     };
 
     // Swipe handlers
@@ -275,18 +318,35 @@ export const FrontendProjectsCarousel: React.FC = () => {
 
                             {/* Content */}
                             <div className="relative z-10 p-4 md:p-6 lg:p-8 h-full flex flex-col justify-between">
-                                {/* Header with GitHub icon */}
+                                {/* Header with GitHub and Website icons */}
                                 <div className="flex justify-between items-start">
-                                    <motion.div
-                                        className="p-2 md:p-3 bg-white/20 rounded-lg md:rounded-xl backdrop-blur-sm border border-white/30"
-                                        whileHover={{
-                                            scale: 1.1,
-                                            backgroundColor: "rgba(255,255,255,0.3)"
-                                        }}
-                                        whileTap={{ scale: 0.95 }}
-                                    >
-                                        <Github size={20} className="text-white md:w-7 md:h-7" />
-                                    </motion.div>
+                                    <div className="flex gap-2 md:gap-3">
+                                        <motion.div
+                                            className="p-2 md:p-3 bg-white/20 rounded-lg md:rounded-xl backdrop-blur-sm border border-white/30 cursor-pointer"
+                                            whileHover={{
+                                                scale: 1.1,
+                                                backgroundColor: "rgba(255,255,255,0.3)"
+                                            }}
+                                            whileTap={{ scale: 0.95 }}
+                                            onClick={(e) => handleGithubClick(e, frontendProjects[currentIndex])}
+                                        >
+                                            <Github size={20} className="text-white md:w-7 md:h-7" />
+                                        </motion.div>
+
+                                        {frontendProjects[currentIndex].websiteUrl && (
+                                            <motion.div
+                                                className="p-2 md:p-3 bg-white/20 rounded-lg md:rounded-xl backdrop-blur-sm border border-white/30 cursor-pointer"
+                                                whileHover={{
+                                                    scale: 1.1,
+                                                    backgroundColor: "rgba(255,255,255,0.3)"
+                                                }}
+                                                whileTap={{ scale: 0.95 }}
+                                                onClick={(e) => handleWebsiteClick(e, frontendProjects[currentIndex])}
+                                            >
+                                                <ExternalLink size={20} className="text-white md:w-7 md:h-7" />
+                                            </motion.div>
+                                        )}
+                                    </div>
                                 </div>
 
                                 {/* Project Info */}
@@ -346,8 +406,17 @@ export const FrontendProjectsCarousel: React.FC = () => {
                                     whileHover={{ scale: 1, opacity: 1 }}
                                     transition={{ duration: 0.3 }}
                                 >
-                                    <Github size={24} />
-                                    <span>View on GitHub</span>
+                                    {frontendProjects[currentIndex].websiteUrl ? (
+                                        <>
+                                            <ExternalLink size={24} />
+                                            <span>View Website</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Github size={24} />
+                                            <span>View on GitHub</span>
+                                        </>
+                                    )}
                                 </motion.div>
                             </motion.div>
                         </motion.div>

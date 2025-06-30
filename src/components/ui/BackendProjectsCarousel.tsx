@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, PanInfo } from 'framer-motion';
-import { Github, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Github, ChevronLeft, ChevronRight, ExternalLink } from 'lucide-react';
 import { trackEvent } from '../../lib/posthog';
 
 interface BackendProject {
@@ -8,6 +8,7 @@ interface BackendProject {
     title: string;
     description: string;
     githubUrl: string;
+    websiteUrl?: string;
     technologies: string[];
     backgroundGradient: string;
 }
@@ -15,50 +16,50 @@ interface BackendProject {
 const backendProjects: BackendProject[] = [
     {
         id: '1',
-        title: 'Microservices API Gateway',
-        description: 'Scalable API gateway built with Go and Docker for handling microservices communication',
-        githubUrl: 'https://github.com/bharabhi01/api-gateway',
-        technologies: ['Go', 'Docker', 'Redis', 'PostgreSQL'],
+        title: 'authsystem',
+        description: 'A highly scalable, blazingly fast username availability checker',
+        githubUrl: 'https://github.com/bharabhi01/authsystem',
+        technologies: ['Go', 'Redis', 'PostgreSQL', 'Bloom Filters'],
         backgroundGradient: 'linear-gradient(135deg, rgba(16, 185, 129, 0.8) 0%, rgba(6, 182, 212, 0.8) 100%)'
     },
     {
         id: '2',
-        title: 'Real-time Chat Server',
-        description: 'WebSocket-based chat application with Node.js, Express, and MongoDB',
-        githubUrl: 'https://github.com/bharabhi01/chat-server',
-        technologies: ['Node.js', 'Express', 'MongoDB', 'WebSocket'],
-        backgroundGradient: 'linear-gradient(135deg, rgba(139, 92, 246, 0.8) 0%, rgba(168, 85, 247, 0.8) 100%)'
+        title: 'circuit-breaker',
+        description: 'A lightweight, thread-safe circuit breaker implementation in idiomatic Go. Prevents cascading failures in distributed systems by automatically detecting failures and blocking operations likely to fail.',
+        githubUrl: 'https://github.com/bharabhi01/circuit-breaker',
+        technologies: ['Go'],
+        backgroundGradient: 'linear-gradient(135deg, rgba(162, 159, 169, 0.8) 0%, rgba(168, 85, 247, 0.8) 100%)'
     },
     {
         id: '3',
-        title: 'Distributed Task Queue',
-        description: 'High-performance task processing system using Go and Redis for job queuing',
-        githubUrl: 'https://github.com/bharabhi01/task-queue',
-        technologies: ['Go', 'Redis', 'Docker', 'Kubernetes'],
+        title: 'shorturl-go',
+        description: 'A high-performance URL shortener service built with Go, PostgreSQL, and Redis. Features include fast URL shortening, efficient redirects, rate limiting, and a clean RESTful API. Designed for scalability and reliability in production environments. ',
+        githubUrl: 'https://github.com/bharabhi01/shorturl-go',
+        technologies: ['Go', 'Gin', 'PostgreSQL', 'Redis', 'Docker'],
         backgroundGradient: 'linear-gradient(135deg, rgba(59, 130, 246, 0.8) 0%, rgba(147, 51, 234, 0.8) 100%)'
     },
     {
         id: '4',
-        title: 'RESTful E-commerce API',
-        description: 'Complete e-commerce backend with authentication, payments, and inventory management',
-        githubUrl: 'https://github.com/bharabhi01/ecommerce-api',
-        technologies: ['Node.js', 'Express', 'PostgreSQL', 'JWT'],
+        title: 'blob-storage',
+        description: 'A serverless file storage application built with React and AWS Amplify. Upload, preview, and manage files securely in the cloud using Amazon S3. Features include drag-and-drop uploads, file previews, and secure access via presigned URLs. ',
+        githubUrl: 'https://github.com/bharabhi01/blob-storage',
+        technologies: ['React', 'AWS Amplify', 'Amazon S3', 'API Gateway'],
         backgroundGradient: 'linear-gradient(135deg, rgba(245, 158, 11, 0.8) 0%, rgba(251, 146, 60, 0.8) 100%)'
     },
     {
         id: '5',
-        title: 'GraphQL Server',
-        description: 'Modern GraphQL API with real-time subscriptions and efficient data fetching',
-        githubUrl: 'https://github.com/bharabhi01/graphql-server',
-        technologies: ['Node.js', 'GraphQL', 'Apollo', 'MongoDB'],
+        title: 'bloom-filter',
+        description: 'A space-efficient JavaScript implementation of Bloom filters with comprehensive test cases. This probabilistic data structure offers constant-time lookups and insertions with configurable false positive rates. Includes performance benchmarks, optimal parameter calculations, and practical examples for web applications, databases, and network systems',
+        githubUrl: 'https://github.com/bharabhi01/bloom-filter',
+        technologies: ['JavaScript'],
         backgroundGradient: 'linear-gradient(135deg, rgba(239, 68, 68, 0.8) 0%, rgba(244, 63, 94, 0.8) 100%)'
     },
     {
         id: '6',
-        title: 'Blockchain Smart Contract',
-        description: 'Ethereum smart contracts for decentralized applications with Web3 integration',
-        githubUrl: 'https://github.com/bharabhi01/smart-contracts',
-        technologies: ['Solidity', 'Web3.js', 'Ethereum', 'Truffle'],
+        title: 'httpserver',
+        description: 'A simple HTTP server in Go that handles GET and POST requests. It serves static files from the current directory and logs requests to the console.',
+        githubUrl: 'https://github.com/bharabhi01/httpserver',
+        technologies: ['Go'],
         backgroundGradient: 'linear-gradient(135deg, rgba(34, 197, 94, 0.8) 0%, rgba(16, 185, 129, 0.8) 100%)'
     }
 ];
@@ -165,11 +166,40 @@ export const BackendProjectsCarousel: React.FC = () => {
     };
 
     const handleCardClick = (project: BackendProject) => {
+        // If website exists, open website; otherwise open GitHub
+        if (project.websiteUrl) {
+            trackEvent('backend_project_website_click', {
+                project_title: project.title,
+                website_url: project.websiteUrl
+            });
+            window.open(project.websiteUrl, '_blank');
+        } else {
+            trackEvent('backend_project_github_click', {
+                project_title: project.title,
+                github_url: project.githubUrl
+            });
+            window.open(project.githubUrl, '_blank');
+        }
+    };
+
+    const handleGithubClick = (e: React.MouseEvent, project: BackendProject) => {
+        e.stopPropagation();
         trackEvent('backend_project_github_click', {
             project_title: project.title,
             github_url: project.githubUrl
         });
         window.open(project.githubUrl, '_blank');
+    };
+
+    const handleWebsiteClick = (e: React.MouseEvent, project: BackendProject) => {
+        e.stopPropagation();
+        if (project.websiteUrl) {
+            trackEvent('backend_project_website_click', {
+                project_title: project.title,
+                website_url: project.websiteUrl
+            });
+            window.open(project.websiteUrl, '_blank');
+        }
     };
 
     // Swipe handlers
@@ -275,18 +305,35 @@ export const BackendProjectsCarousel: React.FC = () => {
 
                             {/* Content */}
                             <div className="relative z-10 p-4 md:p-6 lg:p-8 h-full flex flex-col justify-between">
-                                {/* Header with GitHub icon */}
+                                {/* Header with GitHub and Website icons */}
                                 <div className="flex justify-between items-start">
-                                    <motion.div
-                                        className="p-3 bg-white/20 rounded-xl backdrop-blur-sm border border-white/30"
-                                        whileHover={{
-                                            scale: 1.1,
-                                            backgroundColor: "rgba(255,255,255,0.3)"
-                                        }}
-                                        whileTap={{ scale: 0.95 }}
-                                    >
-                                        <Github size={28} className="text-white" />
-                                    </motion.div>
+                                    <div className="flex gap-2 md:gap-3">
+                                        <motion.div
+                                            className="p-3 bg-white/20 rounded-xl backdrop-blur-sm border border-white/30 cursor-pointer"
+                                            whileHover={{
+                                                scale: 1.1,
+                                                backgroundColor: "rgba(255,255,255,0.3)"
+                                            }}
+                                            whileTap={{ scale: 0.95 }}
+                                            onClick={(e) => handleGithubClick(e, backendProjects[currentIndex])}
+                                        >
+                                            <Github size={28} className="text-white" />
+                                        </motion.div>
+
+                                        {backendProjects[currentIndex].websiteUrl && (
+                                            <motion.div
+                                                className="p-3 bg-white/20 rounded-xl backdrop-blur-sm border border-white/30 cursor-pointer"
+                                                whileHover={{
+                                                    scale: 1.1,
+                                                    backgroundColor: "rgba(255,255,255,0.3)"
+                                                }}
+                                                whileTap={{ scale: 0.95 }}
+                                                onClick={(e) => handleWebsiteClick(e, backendProjects[currentIndex])}
+                                            >
+                                                <ExternalLink size={28} className="text-white" />
+                                            </motion.div>
+                                        )}
+                                    </div>
                                 </div>
 
                                 {/* Project Info */}
@@ -346,8 +393,17 @@ export const BackendProjectsCarousel: React.FC = () => {
                                     whileHover={{ scale: 1, opacity: 1 }}
                                     transition={{ duration: 0.3 }}
                                 >
-                                    <Github size={24} />
-                                    <span>View on GitHub</span>
+                                    {backendProjects[currentIndex].websiteUrl ? (
+                                        <>
+                                            <ExternalLink size={24} />
+                                            <span>View Website</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Github size={24} />
+                                            <span>View on GitHub</span>
+                                        </>
+                                    )}
                                 </motion.div>
                             </motion.div>
                         </motion.div>

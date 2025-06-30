@@ -189,7 +189,7 @@ export const UIUXProjectsCarousel: React.FC = () => {
     const handleMouseLeave = () => setIsPaused(false);
 
     return (
-        <div className="relative w-full h-[600px] md:h-[700px] flex flex-col items-center justify-center overflow-hidden px-4 md:px-0">
+        <div className="relative w-full h-[600px] md:h-[700px] flex flex-col items-center justify-center px-4 md:px-0">
             {/* Background Text */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden">
                 <div className="text-white/[0.08] text-[6rem] md:text-[8rem] lg:text-[12rem] font-black tracking-[0.05em] select-none whitespace-nowrap">
@@ -203,7 +203,8 @@ export const UIUXProjectsCarousel: React.FC = () => {
                 <motion.button
                     className="hidden md:block absolute -left-16 md:-left-20 lg:-left-24 top-1/2 transform -translate-y-1/2 text-white/60 hover:text-white transition-colors duration-200 cursor-pointer z-30 bg-white/10 hover:bg-white/20 rounded-full p-2 border border-white/10"
                     onClick={handlePrevious}
-                    whileTap={{ scale: 0.9 }}
+                    onMouseEnter={handleMouseEnter}
+                    onMouseLeave={handleMouseLeave}
                 >
                     <ChevronLeft size={16} strokeWidth={2} />
                 </motion.button>
@@ -211,7 +212,8 @@ export const UIUXProjectsCarousel: React.FC = () => {
                 <motion.button
                     className="hidden md:block absolute -right-16 md:-right-20 lg:-right-24 top-1/2 transform -translate-y-1/2 text-white/60 hover:text-white transition-colors duration-200 cursor-pointer z-30 bg-white/10 hover:bg-white/20 rounded-full p-2 border border-white/10"
                     onClick={handleNext}
-                    whileTap={{ scale: 0.9 }}
+                    onMouseEnter={handleMouseEnter}
+                    onMouseLeave={handleMouseLeave}
                 >
                     <ChevronRight size={16} strokeWidth={2} />
                 </motion.button>
