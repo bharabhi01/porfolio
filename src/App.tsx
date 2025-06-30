@@ -1,21 +1,52 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MobileLayout, DesktopLayout } from './components/layouts';
 import { DetailPage } from './pages/DetailPage';
 import { useTime } from './hooks';
 import { pageTransitionVariants } from './utils/animations';
+import { initPostHog, trackPageView, trackNavigation } from './lib/posthog';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home');
   const { currentTime, formattedTime, timezone } = useTime();
 
+  // Initialize PostHog on app mount
+  useEffect(() => {
+    initPostHog();
+
+    // Track initial page load
+    trackPageView('home', {
+      initial_load: true,
+      timestamp: new Date().toISOString(),
+      timezone: timezone
+    });
+  }, [timezone]);
+
+  // Track page changes
+  useEffect(() => {
+    if (currentPage !== 'home') {
+      trackPageView(currentPage, {
+        page_type: 'detail_page',
+        timestamp: new Date().toISOString()
+      });
+    }
+  }, [currentPage]);
+
   const navigateToPage = useCallback((page: string) => {
+    const previousPage = currentPage;
     setCurrentPage(page);
-  }, []);
+
+    // Track navigation
+    trackNavigation(previousPage, page);
+  }, [currentPage]);
 
   const navigateToHome = useCallback(() => {
+    const previousPage = currentPage;
     setCurrentPage('home');
-  }, []);
+
+    // Track navigation back to home
+    trackNavigation(previousPage, 'home');
+  }, [currentPage]);
 
   return (
     <motion.div
