@@ -45,13 +45,8 @@ export const MobileLayout: React.FC<MobileLayoutProps> = ({
 
             {/* Motivational Quote */}
             <motion.div
-                className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-4 overflow-hidden"
+                className="px-4 py-2"
                 variants={fadeInUpVariants}
-                whileHover={{
-                    scale: 1.01,
-                    y: -2,
-                    transition: { duration: 0.3, ease: "easeOut" }
-                }}
             >
                 <motion.div
                     key={currentQuoteIndex}
