@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence, PanInfo } from 'framer-motion';
 import { Github, ChevronLeft, ChevronRight } from 'lucide-react';
 import { trackEvent } from '../../lib/posthog';
 
@@ -66,15 +66,28 @@ const frontendProjects: FrontendProject[] = [
 export const FrontendProjectsCarousel: React.FC = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [direction, setDirection] = useState(0);
+    const [isPaused, setIsPaused] = useState(false);
+    const intervalRef = useRef<number | null>(null);
 
-    // Auto-play functionality
+    // Auto-play functionality with pause support
     useEffect(() => {
-        const interval = setInterval(() => {
-            handleNext();
-        }, 5000);
+        if (!isPaused) {
+            intervalRef.current = setInterval(() => {
+                handleNext();
+            }, 5000);
+        } else {
+            if (intervalRef.current) {
+                clearInterval(intervalRef.current);
+                intervalRef.current = null;
+            }
+        }
 
-        return () => clearInterval(interval);
-    }, [currentIndex]);
+        return () => {
+            if (intervalRef.current) {
+                clearInterval(intervalRef.current);
+            }
+        };
+    }, [currentIndex, isPaused]);
 
     const slideVariants = {
         hiddenRight: {
@@ -159,17 +172,54 @@ export const FrontendProjectsCarousel: React.FC = () => {
         window.open(project.githubUrl, '_blank');
     };
 
+    // Swipe handlers
+    const handleDragEnd = (event: any, info: PanInfo) => {
+        const swipeThreshold = 50;
+        if (info.offset.x > swipeThreshold) {
+            handlePrevious();
+            trackEvent('frontend_carousel_navigation', { direction: 'swipe_left' });
+        } else if (info.offset.x < -swipeThreshold) {
+            handleNext();
+            trackEvent('frontend_carousel_navigation', { direction: 'swipe_right' });
+        }
+    };
+
+    // Pause/resume handlers
+    const handleMouseEnter = () => setIsPaused(true);
+    const handleMouseLeave = () => setIsPaused(false);
+
     return (
-        <div className="relative w-full h-[700px] flex flex-col items-center justify-center overflow-hidden">
+        <div className="relative w-full h-[600px] md:h-[700px] flex flex-col items-center justify-center px-4 md:px-0">
             {/* Background Text */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <div className="text-white/[0.08] text-[12rem] font-black tracking-[0.1em] select-none">
+                <div className="text-white/[0.08] text-[3.5rem] sm:text-[4.5rem] md:text-[7rem] lg:text-[11rem] font-black tracking-[0.02em] select-none">
                     FRONTEND
                 </div>
             </div>
 
             {/* Main Carousel */}
-            <div className="relative w-full max-w-6xl h-[580px] flex items-center justify-center z-10">
+            <div className="relative w-full max-w-6xl h-[480px] md:h-[580px] flex items-center justify-center z-10">
+                {/* Navigation Arrows - Hidden on mobile, visible on desktop */}
+                <motion.button
+                    className="hidden md:block absolute -left-16 md:-left-20 lg:-left-24 top-1/2 transform -translate-y-1/2 text-white/80 hover:text-white transition-colors duration-200 cursor-pointer z-30 bg-black/50 backdrop-blur-md rounded-full p-3 md:p-4 border border-white/20 shadow-lg"
+                    onClick={handlePrevious}
+                    variants={leftSliderVariants}
+                    whileHover="hover"
+                    whileTap={{ scale: 0.9 }}
+                >
+                    <ChevronLeft size={20} strokeWidth={2} className="md:w-6 md:h-6" />
+                </motion.button>
+
+                <motion.button
+                    className="hidden md:block absolute -right-16 md:-right-20 lg:-right-24 top-1/2 transform -translate-y-1/2 text-white/80 hover:text-white transition-colors duration-200 cursor-pointer z-30 bg-black/50 backdrop-blur-md rounded-full p-3 md:p-4 border border-white/20 shadow-lg"
+                    onClick={handleNext}
+                    variants={slidersVariants}
+                    whileHover="hover"
+                    whileTap={{ scale: 0.9 }}
+                >
+                    <ChevronRight size={20} strokeWidth={2} className="md:w-6 md:h-6" />
+                </motion.button>
+
                 <AnimatePresence>
                     <motion.div
                         key={currentIndex}
@@ -178,9 +228,13 @@ export const FrontendProjectsCarousel: React.FC = () => {
                         exit="exit"
                         variants={slideVariants}
                         className="absolute w-full h-full flex items-center justify-center"
+                        drag="x"
+                        dragConstraints={{ left: 0, right: 0 }}
+                        dragElastic={0.2}
+                        onDragEnd={handleDragEnd}
                     >
                         <motion.div
-                            className="w-[450px] h-[560px] rounded-3xl overflow-hidden relative group cursor-pointer"
+                            className="w-[320px] h-[450px] md:w-[400px] md:h-[520px] lg:w-[450px] lg:h-[560px] rounded-2xl md:rounded-3xl overflow-hidden relative group cursor-pointer mx-auto"
                             style={{
                                 background: frontendProjects[currentIndex].backgroundGradient
                             }}
@@ -189,6 +243,8 @@ export const FrontendProjectsCarousel: React.FC = () => {
                                 boxShadow: "0 25px 50px rgba(0,0,0,0.3)"
                             }}
                             onClick={() => handleCardClick(frontendProjects[currentIndex])}
+                            onMouseEnter={handleMouseEnter}
+                            onMouseLeave={handleMouseLeave}
                         >
                             {/* Animated background pattern */}
                             <motion.div
@@ -218,25 +274,25 @@ export const FrontendProjectsCarousel: React.FC = () => {
                             <div className="absolute inset-0 bg-black/10 backdrop-blur-sm" />
 
                             {/* Content */}
-                            <div className="relative z-10 p-8 h-full flex flex-col justify-between">
+                            <div className="relative z-10 p-4 md:p-6 lg:p-8 h-full flex flex-col justify-between">
                                 {/* Header with GitHub icon */}
                                 <div className="flex justify-between items-start">
                                     <motion.div
-                                        className="p-3 bg-white/20 rounded-xl backdrop-blur-sm border border-white/30"
+                                        className="p-2 md:p-3 bg-white/20 rounded-lg md:rounded-xl backdrop-blur-sm border border-white/30"
                                         whileHover={{
                                             scale: 1.1,
                                             backgroundColor: "rgba(255,255,255,0.3)"
                                         }}
                                         whileTap={{ scale: 0.95 }}
                                     >
-                                        <Github size={28} className="text-white" />
+                                        <Github size={20} className="text-white md:w-7 md:h-7" />
                                     </motion.div>
                                 </div>
 
                                 {/* Project Info */}
-                                <div className="space-y-6">
+                                <div className="space-y-4 md:space-y-6">
                                     <motion.h3
-                                        className="text-white text-2xl font-bold leading-tight"
+                                        className="text-white text-lg md:text-xl lg:text-2xl font-bold leading-tight"
                                         initial={{ opacity: 0, y: 30 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: 0.3, duration: 0.6 }}
@@ -245,7 +301,7 @@ export const FrontendProjectsCarousel: React.FC = () => {
                                     </motion.h3>
 
                                     <motion.p
-                                        className="text-white/90 text-base leading-relaxed"
+                                        className="text-white/90 text-sm md:text-base leading-relaxed"
                                         initial={{ opacity: 0, y: 30 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: 0.4, duration: 0.6 }}
@@ -297,31 +353,10 @@ export const FrontendProjectsCarousel: React.FC = () => {
                         </motion.div>
                     </motion.div>
                 </AnimatePresence>
-
-                {/* Navigation Arrows */}
-                <motion.button
-                    className="absolute left-12 top-1/2 transform -translate-y-1/2 text-white/60 hover:text-white transition-colors duration-200 cursor-pointer z-10"
-                    onClick={handlePrevious}
-                    variants={leftSliderVariants}
-                    whileHover="hover"
-                    whileTap={{ scale: 0.95 }}
-                >
-                    <ChevronLeft size={28} strokeWidth={1.5} />
-                </motion.button>
-
-                <motion.button
-                    className="absolute right-12 top-1/2 transform -translate-y-1/2 text-white/60 hover:text-white transition-colors duration-200 cursor-pointer z-10"
-                    onClick={handleNext}
-                    variants={slidersVariants}
-                    whileHover="hover"
-                    whileTap={{ scale: 0.95 }}
-                >
-                    <ChevronRight size={28} strokeWidth={1.5} />
-                </motion.button>
             </div>
 
             {/* Dot Indicators */}
-            <div className="flex gap-4 mt-10">
+            <div className="flex gap-3 md:gap-4 mt-6 md:mt-10">
                 {frontendProjects.map((_, index) => (
                     <motion.button
                         key={index}
